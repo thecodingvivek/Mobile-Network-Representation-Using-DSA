@@ -16,12 +16,16 @@ class Mapper{
             this.resizeCanvas();
         });
 
+        // this.cursorCoverage();
         window.addEventListener("click",(event)=>{
             const rect = this.canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
-            if (this.network.insertVertex(x,y,1000)[1]){
+            const output=this.network.insertVertex(x,y,1000);
+            if (output[1]){
                 this.createGraphReprentations();
+            }
+            else{
             }
         });
         this.drawAxes();
@@ -44,6 +48,8 @@ class Mapper{
             context.beginPath();
             context.arc(vertex.position[0], vertex.position[1], 5, 0, Math.PI * 2);
             context.fill();
+            // this.addCoverage(vertex);
+
         }
         this.drawEdges();
     }
@@ -100,6 +106,43 @@ class Mapper{
                 this.ctx.closePath();
             }
         }
+    }
+
+
+    addCoverage(vertex){
+        let div=document.createElement("div");
+        div.className="on_coverage_circle";
+        div.style.left=vertex.position[0]-vertex.radius+"px";
+        div.style.top=vertex.position[1]-vertex.radius+"px";
+        div.style.width=parseFloat(vertex.radius*2)+"px";
+        document.body.appendChild(div);
+        vertex.div=div;
+    }
+
+    cursorCoverage(){
+        let coverage=document.getElementsByClassName("cursor_coverage")[0];
+        coverage.style.display="flex";
+        const rect = this.canvas.getBoundingClientRect();
+        document.addEventListener("mousemove", (e) => {
+            coverage.style.top = (e.clientY - rect.top) - (coverage.offsetWidth / 2) + "px";
+            coverage.style.left = (e.clientX - rect.left) - (coverage.offsetHeight / 2) + "px";
+            for(const [vertex,edge] of this.network.outgoing)
+            {
+                try{
+
+                    if(this.network.isCoverageIntersecting(e.clientX,e.clientY,25,vertex.position[0],vertex.position[1],vertex.radius))
+                    {
+                        vertex.div.className="coverage_circle";
+                    }
+                    else{
+                        vertex.div.className="on_coverage_circle";
+                    }
+                }
+                catch{
+
+                }
+            }
+        });
     }
 }
 

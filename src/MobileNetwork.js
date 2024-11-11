@@ -56,6 +56,7 @@ class Vertex {
       this.type = "tower";
       this.msc = msc;
       this.radius = this.coverageArea(ht);
+      this.div=null;
     }
   
     coverageArea(ht, hr = 1.5) {
@@ -69,6 +70,7 @@ class MSCVertex {
       this.position = [x,y];
       this.radius = 0;
       this.type = "msc";
+      this.div=null;
       this.directory = new TelephoneHashMap();
     }
 }

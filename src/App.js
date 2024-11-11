@@ -12,6 +12,7 @@ function App() {
 
   useEffect(()=>{
     mapper.initMapper("tanuku");
+
   },[]);
   
 
@@ -20,6 +21,8 @@ function App() {
     <div className="main w-fit h-fit bg-black">
       <canvas width={window.innerWidth} height={window.innerHeight} id={'canv'}>
       </canvas>
+      <div className='cursor_coverage'>
+      </div>
     </div>
   );
 }
