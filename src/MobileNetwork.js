@@ -63,18 +63,7 @@ class Vertex {
       return Math.sqrt(2 * ht) + Math.sqrt(2 * hr);
     }
 }
-  
-class MSCVertex {
-    constructor(data, x, y) {
-      this.data = data;
-      this.position = [x,y];
-      this.radius = 0;
-      this.type = "msc";
-      this.div=null;
-      this.directory = new TelephoneHashMap();
-    }
-}
-  
+
 class TelephoneHashMap {
     constructor(capacity = 100) {
       this.capacity = capacity;
@@ -136,6 +125,20 @@ class TelephoneHashMap {
       return JSON.stringify(this.buckets);
     }
 }
+
+  
+class MSCVertex {
+  static mainDirectory=new TelephoneHashMap();
+  constructor(data, x, y) {
+    this.data = data;
+    this.position = [x,y];
+    this.radius = 0;
+    this.type = "msc";
+    this.div=null;
+    this.directory = new TelephoneHashMap();
+  }
+}
+
 
 class User {
     constructor(data, number, x, y) {
@@ -221,6 +224,21 @@ class Network {
     insertEdge(data, u, v) {
       const edge = new Edge(data, u, v);
       this.outgoing.get(u).set(v, edge);
+    }
+
+    addUser(name, number, x, y) {
+      const newUser = new User(name, number, x, y);
+      console.log(name,number,x,y);
+      MSCVertex.mainDirectory.put(number,this.msc);
+      for (const vertex of this.outgoing.keys()){
+          if (this.isIntersecting(x, y, vertex.position[0], vertex.position[1], vertex.radius)) {
+              newUser.connectedTower = vertex;
+              console.log("adding data to mnc");
+              // this.connectToMSC(newUser);
+              return newUser,true;
+          }
+      }
+      return newUser,false;
     }
   
     displayDetails() {

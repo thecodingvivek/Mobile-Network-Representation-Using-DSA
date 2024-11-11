@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import Mapper from './map';
+import NavBar from './NavBar';
+import MapperContext from './MapContext';
+
 
 function App() {
 
@@ -18,12 +21,15 @@ function App() {
 
 
   return (
-    <div className="main w-fit h-fit bg-black">
-      <canvas width={window.innerWidth} height={window.innerHeight} id={'canv'}>
-      </canvas>
-      <div className='cursor_coverage'>
+    <MapperContext.Provider value={mapper}>
+      <div className="main w-fit h-fit bg-black">
+        <NavBar />
+        <canvas width={window.innerWidth} height={window.innerHeight} id={'canv'}>
+        </canvas>
+        <div className='cursor_coverage' onClick={(e)=>{mapper.addTower(e)}}>
+        </div>
       </div>
-    </div>
+    </MapperContext.Provider>
   );
 }
 
