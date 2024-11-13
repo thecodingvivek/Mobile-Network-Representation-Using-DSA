@@ -8,14 +8,13 @@ import MapperContext from './MapContext';
 function App() {
 
   const [mapper,setMapper]=useState(new Mapper("tanuku"));
-  const [windowsize,setWindowsize]=useState({
-    width:window.innerWidth,
-    height:window.innerHeight
-  });
+  const [socket,setSocket]=useState(null);
 
   useEffect(()=>{
     mapper.initMapper("tanuku");
-
+    console.log(mapper.network.msc.data);
+    setSocket(new WebSocket(`ws://127.0.0.1:8000/ws/socket-server/?msc=${mapper.network.msc.data}`));
+    console.log("Socket created");
   },[]);
   
 

@@ -34,7 +34,6 @@ class Mapper{
         const context = this.canvas.getContext('2d');
         for(let [vertex,neighbor] of this.network.outgoing)
         {
-            console.log('yoo',vertex);
             context.fillStyle = '#0a9396';
             context.beginPath();
             context.arc(vertex.position[0], vertex.position[1], 5, 0, Math.PI * 2);
@@ -107,6 +106,7 @@ class Mapper{
         console.log(output);
         if (output[1]){
             this.createGraphReprentations();
+            console.log("pathh",this.network.getPathToMSC(output[0]))
         }
         else{
         }
@@ -151,6 +151,7 @@ class Mapper{
         d.style.top = (e.clientY - r.top) + "px";
         d.style.left = (e.clientX - r.left) + "px";
     }
+
     cursorCoverage(){
         window.addEventListener("mousemove",this.el_cursorCoverage);
     }
@@ -180,6 +181,7 @@ class Mapper{
                 const output=this.network.addUser("u"+x,9652314347,x,y);
                 let div=document.createElement("div");
                 div.className="user";
+                div.setAttribute("data-number",output[0].number);
                 document.body.appendChild(div);
                 div.style.top = (e.clientY - rect.top)  + "px";
                 div.style.left = (e.clientX - rect.left)+ "px";
@@ -191,6 +193,11 @@ class Mapper{
                 }
             }
         });
+    }
+
+
+    makeCall(startnumber,endnumber){
+        
     }
 }
 

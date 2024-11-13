@@ -180,8 +180,8 @@ class Network {
         if (current.type === "msc") return path;
         if (!visited.has(current)) {
           visited.add(current);
-          for (const neighbor of this.outgoing.get(current).keys()) {
-            if (!visited.has(neighbor)) {
+          for (const [neighbor,edge] of this.outgoing.get(current)) {
+            if (!visited.has(neighbor)){
               stack.push([neighbor, path.concat(neighbor)]);
             }
           }
@@ -240,6 +240,27 @@ class Network {
       }
       return[newUser,false];
     }
+
+    // Assuming `msc`, `nl`, and other objects/methods are already defined in JavaScript
+
+    establishCall(number_1, number_2) {
+      const msc = MSCVertex.mainDirectory.get(number_1);
+      const user_1 = msc.directory.get(number_1);
+      const userMscPath = this.getPathToMSC(user_1.connectedTower);
+
+      // Print the path for user 1
+      userMscPath.forEach(path => {
+          console.log(path.data, " ");
+      });
+      console.log();
+
+      // Print call status
+      console.log("Call established");
+    }
+
+// Example usage:
+// establishCall('12345', '67890');
+
   
     displayDetails() {
       for (const [vertex, edges] of this.outgoing.entries()) {
