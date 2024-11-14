@@ -159,7 +159,7 @@ class Mapper{
 
 
 
-    addUser(){
+    addUser(number){
         document.getElementsByClassName("cursor_coverage")[0].style.display="none";
         window.removeEventListener("mousemove", this.el_cursorCoverage);
 
@@ -178,7 +178,7 @@ class Mapper{
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
-                const output=this.network.addUser("u"+x,9652314347,x,y);
+                const output=this.network.addUser("u"+x,number,x,y);
                 let div=document.createElement("div");
                 div.className="user";
                 div.setAttribute("data-number",output[0].number);
@@ -195,6 +195,9 @@ class Mapper{
         });
     }
 
+    addUserToMainDirectory(msc,number){
+        
+    }
 
     makeCall(startnumber,endnumber){
         

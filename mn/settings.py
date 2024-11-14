@@ -75,10 +75,31 @@ TEMPLATES = [
 
 
 CHANNEL_LAYERS = {
-    'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            # Use a secure Redis server URL with authentication and a proper hostname/IP
+            "hosts": ["redis://:a6zd0UJtj6D0QUwuGWtn4zbwqe4DXWM3@redis-12732.c265.us-east-1-2.ec2.redns.redis-cloud.com:12732/0"],
+        },
+    },
+}
+
+# settings.py
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': "redis://:a6zd0UJtj6D0QUwuGWtn4zbwqe4DXWM3@redis-12732.c265.us-east-1-2.ec2.redns.redis-cloud.com:12732/0",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {'max_connections': 100},
+        },
     }
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 WSGI_APPLICATION = 'mn.wsgi.application'
 

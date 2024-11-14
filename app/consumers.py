@@ -4,6 +4,9 @@ from channels.layers import get_channel_layer
 from urllib.parse import parse_qs
 
 
+from django.core.cache import cache
+
+
 class TelephoneHashMap:
     def __init__(self, capacity=100): 
         self.capacity = capacity
@@ -54,13 +57,13 @@ class TelephoneHashMap:
     def __str__(self):
         return str(self.buckets)
 
+
 class YourConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         query_string = self.scope['query_string'].decode()
         query_params = parse_qs(query_string)
         self.msc = query_params.get('msc', [None])[0]
-        print(self.msc)
-        if self.msc:
+        if not cache.get("asgi:group:msc_"+self.msc):
             self.user_group_name = f"msc_{self.msc}"
 
             # Join user group
@@ -86,30 +89,51 @@ class YourConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        msc = data['msc']
-        message = data['number']
+        action=data['action']
 
-        self.user_group_name = f"user_{msc}"
+        if action == 'send_message':
+            msc = data['msc']
+            message = data['number']
+            self.user_group_name = f"user_{msc}"
+            # Join user group
+            
+            await self.channel_layer.group_add(
+                self.user_group_name,
+                self.channel_name
+            )
 
 
-        # Join user group
-        await self.channel_layer.group_add(
-            self.user_group_name,
-            self.channel_name
-        )
+        elif action=="register_user":
+            msc = data['msc']
+            message = data['number']
 
-        # Send message to user group
-        await self.channel_layer.group_send(
-            self.user_group_name,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
+            cache.set(int(message),msc,timeout=None)
+
+        elif action=="call_user":
+            message = data['number']
+            msc=cache.get(int(message))
+            self.user_group_name = f"msc_{msc}"
+            print(message,self.msc)
+            await self.channel_layer.group_send(
+                self.user_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': 'incomming call for '+message
+                }
+            )
+
 
     async def chat_message(self, event):
         message = event['message']
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message
+        }))
+
+    async def add_user(self, event):
+        message = event['message']
+        msc=event['msc']
+        await self.send(text_data=json.dumps({
+            'action':'add_user',
+            'message': message,
+            'msc':msc
         }))
