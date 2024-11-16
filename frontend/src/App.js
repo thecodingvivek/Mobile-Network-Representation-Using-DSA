@@ -30,9 +30,13 @@ function App() {
 
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if(data.action==='add_user')
+        console.log(mapper.users,data);
+        if(data['action']==='call_user')
         {
-          mapper.addUser(data);
+          if(mapper.users.includes(data['message']))
+          {
+            alert("call to user");
+          }
         }
         console.log("Received message:", data);
       };
@@ -44,24 +48,20 @@ function App() {
       socket.onerror = (error) => {
         console.log("WebSocket error:", error);
       };
+
+      mapper.socket=socket;
     }
   }, [socket]);
 
 
-  const sendMessage = (message) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(message));
-    } else {
-      console.log("WebSocket is not open. Ready state is:", socket.readyState);
-    }
-  };
 
   return (
     <MapperContext.Provider value={mapper}>
       {
         load&&
-        <LoadPage setload={setLoad} setname={setNetwork} initmap={InitPage} />
+        <LoadPage setload={setLoad} setname={setNetwork} func={InitPage} name={"Enter Network Name"} />
       }
+      
       <div className="main w-fit h-fit bg-black">
         <NavBar socket={socket} />
         <canvas width={window.innerWidth} height={window.innerHeight} id={'canv'}>

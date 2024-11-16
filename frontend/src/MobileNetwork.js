@@ -190,9 +190,8 @@ class Network {
       return null;
     }
   
-    insertVertex(x,y,ht) {
-      const v = new Vertex("t"+this.notowers, this.msc, x, y, ht);
-      this.notowers+=1;
+    insertVertex(name,x,y,ht) {
+      const v = new Vertex(name, this.msc, x, y, ht);
       let minDistance = Infinity;
       let nearestVertex = null;
       const distanceToV = new Map();
@@ -241,7 +240,6 @@ class Network {
       return[newUser,false];
     }
 
-    // Assuming `msc`, `nl`, and other objects/methods are already defined in JavaScript
 
     establishCall(number_1, number_2) {
       const msc = MSCVertex.mainDirectory.get(number_1);
@@ -258,8 +256,7 @@ class Network {
       console.log("Call established");
     }
 
-// Example usage:
-// establishCall('12345', '67890');
+
 
   
     displayDetails() {
